@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Perkalian Bersusun - Duo Princess Pintar</title>
+    <!-- Tailwind CSS for modern fluid layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter & Comic-like font -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #fff0f5; /* Sweet lavender pink */
+        }
+        .heading-font {
+            font-family: 'Fredoka One', cursive;
+        }
+        :root {
+            --primary: #ff8da1;
+            --primary-dark: #e0527f;
+            --secondary: #9b5de5;
+            --background: #fff0f5;
+            --card-bg: #ffffff;
+            --text: #2d3436;
+            --success: #2ec4b6;
+            --accent: #ff9f1c;
+        }
+        .math-grid {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 15px auto;
+            width: fit-content;
+            text-align: right;
+            letter-spacing: 12px;
+            line-height: 1.6;
+            position: relative;
+        }
+        .math-line {
+            border-bottom: 5px solid #2d3436;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            padding-right: 12px;
+            position: relative;
+        }
+        .math-sign {
+            position: absolute;
+            left: -30px;
+            bottom: -5px;
+        }
+        .slide {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        .slide.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f39c12;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 sm:p-6">
+
+<!-- Top Header & Scoreboard (Hidden during Slide 1) -->
+<div id="top-scoreboard" class="w-full max-w-4xl bg-white rounded-2xl shadow-md border-2 border-pink-100 p-4 mb-4 hidden">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <!-- Player 1 Score -->
+        <div class="flex items-center gap-3 bg-pink-50 border border-pink-200 px-4 py-2 rounded-xl w-full sm:w-auto justify-center">
+            <div class="w-10 h-10 rounded-full bg-pink-400 flex items-center justify-center text-white text-xl font-bold">👧</div>
+            <div>
+                <p id="p1-display-name" class="font-bold text-sm text-pink-700">Bilqis</p>
+                <p class="text-xs text-gray-500">Skor: <span id="p1-score" class="font-bold text-pink-600 text-lg">0</span> 🌸</p>
+            </div>
+        </div>
+
+        <!-- Center Badge & Progress -->
+        <div class="text-center">
+            <span class="heading-font text-pink-500 text-xs sm:text-sm tracking-wide uppercase">🎀 MULTIPLY PRINCESS DUO 🎀</span>
+            <div class="w-32 bg-gray-200 rounded-full h-2 mt-1 mx-auto overflow-hidden">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-400 to-purple-500 h-2" style="width: 5%"></div>
+            </div>
+            <p id="page-indicator" class="text-xs font-bold text-purple-500 mt-1">Halaman 1 / 20</p>
+        </div>
+
+        <!-- Player 2 Score -->
+        <div class="flex items-center gap-3 bg-purple-50 border border-purple-200 px-4 py-2 rounded-xl w-full sm:w-auto justify-center">
+            <div class="w-10 h-10 rounded-full bg-purple-400 flex items-center justify-center text-white text-xl font-bold">👧</div>
+            <div>
+                <p id="p2-display-name" class="font-bold text-sm text-purple-700">Hafizah</p>
+                <p class="text-xs text-gray-500">Skor: <span id="p2-score" class="font-bold text-purple-600 text-lg">0</span> 🌸</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main App Container -->
+<div class="w-full max-w-4xl bg-white rounded-3xl shadow-xl border-4 border-pink-100 p-6 sm:p-8 flex flex-col justify-between min-h-[580px] relative">
+    
+    <!-- Slides Wrapper -->
+    <div id="slides-wrapper" class="flex-grow">
+        
+        <!-- ==============================================
+             SLIDE 1: INPUT NAMA DUA ANAK PEREMPUAN
+             ============================================== -->
+        <div class="slide active" id="slide-1">
+            <div class="text-center">
+                <div class="flex justify-center gap-4 mb-6">
+                    <span class="text-6xl animate-bounce">🎀</span>
+                    <span class="text-6xl animate-bounce delay-100">🌸</span>
+                </div>
+                <h1 class="heading-font text-3xl sm:text-4xl text-pink-500 mb-2">Petualangan Perkalian Bersusun</h1>
+                <p class="text-gray-600 text-base sm:text-lg mb-8">Selamat datang, Sahabat Cantik & Cerdas! Tulis namamu di bawah ini untuk memulai petualangan matematika bersama!</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-8">
+                <!-- Input Player 1 -->
+                <div class="bg-pink-50/50 p-6 rounded-2xl border-2 border-pink-200 text-center">
+                    <div class="text-4xl mb-2">👧</div>
+                    <label class="block text-pink-700 font-bold mb-2">Nama Student Pertama:</label>
+                    <input type="text" id="p1-input" value="Bilqis" placeholder="Nama Pemain 1" class="w-full text-center p-3 rounded-xl border-2 border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 font-semibold text-gray-700">
+                </div>
+                <!-- Input Player 2 -->
+                <div class="bg-purple-50/50 p-6 rounded-2xl border-2 border-purple-200 text-center">
+                    <div class="text-4xl mb-2">👧</div>
+                    <label class="block text-purple-700 font-bold mb-2">Nama Student Kedua:</label>
+                    <input type="text" id="p2-input" value="Hafizah" placeholder="Nama Pemain 2" class="w-full text-center p-3 rounded-xl border-2 border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-400 font-semibold text-gray-700">
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="startGame()" class="heading-font bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-lg py-4 px-10 rounded-full shadow-lg transform hover:-translate-y-1 transition duration-200">
+                    Mulai Petualangan Cantik! 🚀
+                </button>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 2: TARGET BELAJAR & MISI
+             ============================================== -->
+        <div class="slide" id="slide-2">
+            <h2 class="heading-font text-2xl sm:text-3xl text-purple-600 mb-4 flex items-center gap-2">🎯 Misi Rahasia Duo Princess Matematika</h2>
+            <p class="text-gray-700 mb-6 leading-relaxed">
+                Hari ini kita memiliki misi istimewa sesuai Kurikulum Merdeka! Kalian berdua akan saling membantu, berdiskusi, dan berbagi trik cerdas untuk menguasai <strong class="text-pink-500">Perkalian Bersusun</strong> dengan gampang dan menyenangkan.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+                    <span class="text-2xl">🔥</span>
+                    <h3 class="font-bold text-amber-800 mt-2">Misi 1: Warm-up!</h3>
+                    <p class="text-sm text-gray-600">Selesaikan 8 soal pemanasan kilat (masing-masing 4 soal bergantian).</p>
+                </div>
+                <div class="bg-pink-50 p-4 rounded-xl border border-pink-200">
+                    <span class="text-2xl">🛍️</span>
+                    <h3 class="font-bold text-pink-800 mt-2">Misi 2: Cerita Nyata</h3>
+                    <p class="text-sm text-gray-600">Pecahkan 3 masalah perkalian dari kehidupan sehari-hari anak perempuan.</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                    <span class="text-2xl">👑</span>
+                    <h3 class="font-bold text-purple-800 mt-2">Misi 3: Kelulusan</h3>
+                    <p class="text-sm text-gray-600">Uji kemampuan akhir demi merebut mahkota Ratu Perkalian Cerdas!</p>
+                </div>
+            </div>
+
+            <div class="p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-xl">
+                <p class="text-sm text-blue-800 font-semibold">🤖 Kak Pio: "Setiap soal yang kalian jawab dengan benar akan memberikan 10 Bunga Cantik 🌸. Kumpulkan bunga sebanyak-banyaknya ya, Princess!"</p>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 3: WARM-UP SLIDE 1 (SOAL 1 & 2)
+             ============================================== -->
+        <div class="slide" id="slide-3">
+            <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-2xl mb-6 text-center">
+                <h3 class="heading-font text-yellow-700 text-lg">🔥 Pemanasan Babak 1 (1 Slide, 2 Soal)</h3>
+                <p class="text-xs text-gray-600 mt-1">Satu soal khusus untuk tiap anak. Yuk, tunjukkan kerja sama terbaik kalian!</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Soal 1 (Anak A) -->
+                <div class="p-6 bg-white border-2 border-pink-100 rounded-2xl shadow-sm text-center">
+                    <span class="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p1-badge">Pemain 1</span>
+                    <p class="text-xl font-bold text-gray-800 mb-4">Berapakah hasil dari <span class="text-pink-500">3 × 4</span>?</p>
+                    <div class="flex justify-center items-center gap-3">
+                        <input type="number" id="warmup-q1" class="w-24 text-center text-lg p-2 border-2 border-pink-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+                        <button onclick="checkWarmUp('warmup-q1', 12, 'ans-w1', 1)" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-xl transition">Cek</button>
+                    </div>
+                    <div id="ans-w1" class="mt-3 text-sm font-bold min-h-[20px]"></div>
+                </div>
+
+                <!-- Soal 2 (Anak B) -->
+                <div class="p-6 bg-white border-2 border-purple-100 rounded-2xl shadow-sm text-center">
+                    <span class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p2-badge">Pemain 2</span>
+                    <p class="text-xl font-bold text-gray-800 mb-4">Berapakah hasil dari <span class="text-purple-500">5 × 2</span>?</p>
+                    <div class="flex justify-center items-center gap-3">
+                        <input type="number" id="warmup-q2" class="w-24 text-center text-lg p-2 border-2 border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400">
+                        <button onclick="checkWarmUp('warmup-q2', 10, 'ans-w2', 2)" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-xl transition">Cek</button>
+                    </div>
+                    <div id="ans-w2" class="mt-3 text-sm font-bold min-h-[20px]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 4: WARM-UP SLIDE 2 (SOAL 3 & 4)
+             ============================================== -->
+        <div class="slide" id="slide-4">
+            <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-2xl mb-6 text-center">
+                <h3 class="heading-font text-yellow-700 text-lg">🔥 Pemanasan Babak 2 (1 Slide, 2 Soal)</h3>
+                <p class="text-xs text-gray-600 mt-1">Luar biasa hebat! Lanjutkan langkah indah kalian di pemanasan berikutnya.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Soal 3 (Anak A) -->
+                <div class="p-6 bg-white border-2 border-pink-100 rounded-2xl shadow-sm text-center">
+                    <span class="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p1-badge">Pemain 1</span>
+                    <p class="text-xl font-bold text-gray-800 mb-4">Berapakah hasil dari <span class="text-pink-500">6 × 3</span>?</p>
+                    <div class="flex justify-center items-center gap-3">
+                        <input type="number" id="warmup-q3" class="w-24 text-center text-lg p-2 border-2 border-pink-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+                        <button onclick="checkWarmUp('warmup-q3', 18, 'ans-w3', 1)" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-xl transition">Cek</button>
+                    </div>
+                    <div id="ans-w3" class="mt-3 text-sm font-bold min-h-[20px]"></div>
+                </div>
+
+                <!-- Soal 4 (Anak B) -->
+                <div class="p-6 bg-white border-2 border-purple-100 rounded-2xl shadow-sm text-center">
+                    <span class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p2-badge">Pemain 2</span>
+                    <p class="text-xl font-bold text-gray-800 mb-4">Berapakah hasil dari <span class="text-purple-500">4 × 5</span>?</p>
+                    <div class="flex justify-center items-center gap-3">
+                        <input type="number" id="warmup-q4" class="w-24 text-center text-lg p-2 border-2 border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400">
+                        <button onclick="checkWarmUp('warmup-q4', 20, 'ans-w4', 2)" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-xl transition">Cek</button>
+                    </div>
+                    <div id="ans-w4" class="mt-3 text-sm font-bold min-h-[20px]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 5: WARM-UP SLIDE 3 (SOAL 5 & 6)
+             ============================================== -->
+        <div class="slide" id="slide-5">
+            <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-2xl mb-6 text-center">
+                <h3 class="heading-font text-yellow-700 text-lg">🔥 Pemanasan Babak 3 (1 Slide, 2 Soal)</h3>
+                <p class="text-xs text-gray-600 mt-1">Pikiran kalian makin cemerlang! Kali ini perkaliannya sedikit lebih menantang ya.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Soal 5 (Anak A) -->
+                <div class="p-6 bg-white border-2 border-pink-100 rounded-2xl shadow-sm text-center">
+                    <span class="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p1-badge">Pemain 1</span>
+                    <p class="text-xl font-bold text-gray-800 mb-4">Berapakah hasil dari <span class="text-pink-500">7 × 2</span>?</p>
+                    <div class="flex justify-center items-center gap-3">
+                        <input type="number" id="warmup-q5" class="w-24 text-center text-lg p-2 border-2 border-pink-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+                        <button onclick="checkWarmUp('warmup-q5', 14, 'ans-w5', 1)" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-xl transition">Cek</button>
+                    </div>
+                    <div id="ans-w5" class="mt-3 text-sm font-bold min-h-[20px]"></div>
+                </div>
+
+                <!-- Soal 6 (Anak B) -->
+                <div class="p-6 bg-white border-2 border-purple-100 rounded-2xl shadow-sm text-center">
+                    <span class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p2-badge">Pemain 2</span>
+                    <p class="text-xl font-bold text-gray-800 mb-4">Berapakah hasil dari <span class="text-purple-500">8 × 3</span>?</p>
+                    <div class="flex justify-center items-center gap-3">
+                        <input type="number" id="warmup-q6" class="w-24 text-center text-lg p-2 border-2 border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400">
+                        <button onclick="checkWarmUp('warmup-q6', 24, 'ans-w6', 2)" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-xl transition">Cek</button>
+                    </div>
+                    <div id="ans-w6" class="mt-3 text-sm font-bold min-h-[20px]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 6: WARM-UP SLIDE 4 (SOAL 7 & 8)
+             ============================================== -->
+        <div class="slide" id="slide-6">
+            <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-2xl mb-6 text-center">
+                <h3 class="heading-font text-yellow-700 text-lg">🔥 Pemanasan Babak Akhir (1 Slide, 2 Soal)</h3>
+                <p class="text-xs text-gray-600 mt-1">Satu lompatan lagi sebelum melaju ke materi utama perkalian bersusun!</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Soal 7 (Anak A) -->
+                <div class="p-6 bg-white border-2 border-pink-100 rounded-2xl shadow-sm text-center">
+                    <span class="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p1-badge">Pemain 1</span>
+                    <p class="text-xl font-bold text-gray-800 mb-4">Berapakah hasil dari <span class="text-pink-500">9 × 4</span>?</p>
+                    <div class="flex justify-center items-center gap-3">
+                        <input type="number" id="warmup-q7" class="w-24 text-center text-lg p-2 border-2 border-pink-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400">
+                        <button onclick="checkWarmUp('warmup-q7', 36, 'ans-w7', 1)" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-xl transition">Cek</button>
+                    </div>
+                    <div id="ans-w7" class="mt-3 text-sm font-bold min-h-[20px]"></div>
+                </div>
+
+                <!-- Soal 8 (Anak B) -->
+                <div class="p-6 bg-white border-2 border-purple-100 rounded-2xl shadow-sm text-center">
+                    <span class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p2-badge">Pemain 2</span>
+                    <p class="text-xl font-bold text-gray-800 mb-4">Berapakah hasil dari <span class="text-purple-500">6 × 5</span>?</p>
+                    <div class="flex justify-center items-center gap-3">
+                        <input type="number" id="warmup-q8" class="w-24 text-center text-lg p-2 border-2 border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400">
+                        <button onclick="checkWarmUp('warmup-q8', 30, 'ans-w8', 2)" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-xl transition">Cek</button>
+                    </div>
+                    <div id="ans-w8" class="mt-3 text-sm font-bold min-h-[20px]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 7: REAL-WORLD CONNECTION 1 (KOTAK DONAT KAK SYIFA)
+             ============================================== -->
+        <div class="slide" id="slide-7">
+            <h2 class="heading-font text-2xl text-pink-600 mb-2 flex items-center gap-2">🍩 Hubungan Nyata 1: Donat Manis Kak Syifa</h2>
+            <p class="text-gray-700 mb-4">
+                Bayangkan kalian sedang membantu **Kak Syifa** merapikan toko donat hiasnya yang super cantik dan harum! 🧁
+            </p>
+
+            <div class="flex flex-col md:flex-row items-center gap-6 bg-amber-50 p-6 rounded-2xl border border-amber-200 mb-6">
+                <div class="flex-shrink-0">
+                    <svg width="150" height="100" viewBox="0 0 120 80">
+                        <!-- Box icon SVG -->
+                        <rect x="10" y="25" width="40" height="30" rx="3" fill="#ffccd5" stroke="#ff769f" stroke-width="2"/>
+                        <circle cx="30" cy="40" r="10" fill="#feca57" />
+                        <circle cx="30" cy="40" r="3" fill="#ffffff" />
+                        
+                        <rect x="65" y="25" width="40" height="30" rx="3" fill="#ffccd5" stroke="#ff769f" stroke-width="2"/>
+                        <circle cx="85" cy="40" r="10" fill="#e0527f" />
+                        <circle cx="85" cy="40" r="3" fill="#ffffff" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-amber-900 text-lg mb-1">Kue Donat Pesta:</h3>
+                    <p class="text-gray-700 text-sm">
+                        Ada <span class="bg-amber-200 px-2 py-0.5 rounded font-bold">3 kotak kue</span> cantik. Setiap kotak berisi <span class="bg-amber-200 px-2 py-0.5 rounded font-bold">12 donat stroberi</span>.
+                    </p>
+                    <p class="text-gray-700 text-sm mt-2">
+                        Berapa jumlah donat semuanya? Kita bisa menambahkannya: <span class="font-mono">12 + 12 + 12</span>. Namun, bayangkan jika kotaknya ada <span class="font-bold text-pink-600">30</span>! Tentu menjumlahkannya satu per satu akan melelahkan sekali.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-pink-50 p-4 rounded-xl border border-pink-200 text-center">
+                <p class="text-sm text-pink-800 font-semibold mb-2">Yuk bantu Kak Syifa menghitung: <strong>12 × 3</strong></p>
+                <div class="flex justify-center items-center gap-3">
+                    <input type="number" id="con1-q" class="w-24 text-center text-lg p-2 border-2 border-pink-300 rounded-xl focus:outline-none">
+                    <button onclick="checkGeneric('con1-q', 36, 'ans-con1')" class="bg-pink-500 text-white font-bold py-2 px-6 rounded-xl">Cek Hasil</button>
+                </div>
+                <div id="ans-con1" class="mt-2 text-sm font-bold"></div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 8: PENGENALAN STRUKTUR BERSUSUN
+             ============================================== -->
+        <div class="slide" id="slide-8">
+            <h2 class="heading-font text-2xl text-purple-600 mb-2">✏️ Cara Menulis Perkalian Bersusun</h2>
+            <p class="text-gray-700 mb-6">Kunci agar hitungan kita tepat adalah menyusun angka dengan lurus ke bawah sesuai nilai tempatnya!</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div class="bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-gray-300 text-center">
+                    <div class="math-grid text-gray-800">
+                        12<br>
+                        3<br>
+                        <div class="math-line"><span class="math-sign">×</span></div>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex gap-3 items-start">
+                        <span class="bg-pink-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mt-1">1</span>
+                        <p class="text-sm text-gray-700">Tulis angka pengali besar <strong>12</strong> di bagian atas dan pengali <strong>3</strong> di bawahnya.</p>
+                    </div>
+                    <div class="flex gap-3 items-start">
+                        <span class="bg-pink-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mt-1">2</span>
+                        <p class="text-sm text-gray-700">Sejajarkan angka <strong>3 (satuan)</strong> tepat di bawah angka <strong>2 (satuan)</strong>.</p>
+                    </div>
+                    <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs text-yellow-800">
+                        ⚠️ **Saran Princess**: Luruskan baris satuan dengan satuan agar hasil tidak bergeser keliru ya!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 9: LANGKAH 1 (KALIKAN SATUAN)
+             ============================================== -->
+        <div class="slide" id="slide-9">
+            <h2 class="heading-font text-2xl text-pink-600 mb-2">🌸 Langkah 1: Pesta Satuan!</h2>
+            <p class="text-gray-700 mb-6">Kita selalu melangkah dari bagian paling kanan (belakang) terlebih dahulu.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div class="bg-pink-50/50 p-6 rounded-2xl border-2 border-pink-200 text-center">
+                    <div class="math-grid text-gray-800">
+                        1<span class="text-pink-500 underline font-extrabold">2</span><br>
+                        <span class="text-pink-500 underline font-extrabold">3</span><br>
+                        <div class="math-line"><span class="math-sign">×</span></div>
+                        <span class="text-pink-500 font-extrabold">6</span>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-gray-700 leading-relaxed">
+                        Kalikan satuan atas dengan satuan bawah:<br>
+                        <strong class="text-lg text-pink-600 font-mono">2 × 3 = 6</strong>
+                    </p>
+                    <p class="text-sm text-gray-600">
+                        Letakkan angka <strong>6</strong> lurus tegak di baris satuan paling belakang!
+                    </p>
+                    <div class="p-4 bg-purple-50 rounded-xl text-xs text-purple-700">
+                        👧👱‍♀️ <strong>Kombinasi Princess:</strong> Diskusikan dengan saudarimu, jika hasilnya masih di bawah 10, kita tidak memerlukan trik menyimpan.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 10: LANGKAH 2 (KALIKAN PULUHAN)
+             ============================================== -->
+        <div class="slide" id="slide-10">
+            <h2 class="heading-font text-2xl text-purple-600 mb-2">🌸 Langkah 2: Giliran Puluhan!</h2>
+            <p class="text-gray-700 mb-6">Setelah satuan selesai, kini kita berpindah mengalikan angka puluhan di depannya.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div class="bg-purple-50/50 p-6 rounded-2xl border-2 border-purple-200 text-center">
+                    <div class="math-grid text-gray-800">
+                        <span class="text-purple-600 underline font-extrabold">1</span>2<br>
+                        <span class="text-purple-600 underline font-extrabold">3</span><br>
+                        <div class="math-line"><span class="math-sign">×</span></div>
+                        <span class="text-purple-600 font-extrabold">3</span>6
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-gray-700 leading-relaxed">
+                        Kalikan puluhan di atas dengan angka pengali bawah:<br>
+                        <strong class="text-lg text-purple-600 font-mono">1 × 3 = 3</strong>
+                    </p>
+                    <p class="text-sm text-gray-600">
+                        Tulis angka <strong>3</strong> tepat di depan angka 6 (sejajar dengan posisi puluhan).
+                    </p>
+                    <p class="text-base text-gray-800 font-bold">
+                        Hore! 12 × 3 = <span class="text-green-500">36</span>! Donat Kak Syifa siap dibagikan! 🍩
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 11: REAL-WORLD CONNECTION 2 (PITA RAMBUT KAK CICI - TEKNIK MENYIMPAN)
+             ============================================== -->
+        <div class="slide" id="slide-11">
+            <h2 class="heading-font text-2xl text-pink-600 mb-2 flex items-center gap-2">🎀 Hubungan Nyata 2: Pita Rambut Kak Cici</h2>
+            <p class="text-gray-700 mb-4">
+                Sekarang mari kita bantu **Kak Cici** menghitung koleksi pita rambutnya yang berkilau indah! 🎀
+            </p>
+
+            <div class="flex flex-col md:flex-row items-center gap-6 bg-pink-50 p-6 rounded-2xl border border-pink-200 mb-6">
+                <div class="flex-shrink-0">
+                    <svg width="130" height="90" viewBox="0 0 100 70">
+                        <!-- Left ribbon loop -->
+                        <path d="M 50 35 C 20 10, 10 35, 50 35 Z" fill="#ff769f" stroke="#e0527f" stroke-width="2"/>
+                        <!-- Right ribbon loop -->
+                        <path d="M 50 35 C 80 10, 90 35, 50 35 Z" fill="#ff769f" stroke="#e0527f" stroke-width="2"/>
+                        <!-- Center knot -->
+                        <circle cx="50" cy="35" r="8" fill="#ffeaa7" stroke="#feca57" stroke-width="2"/>
+                        <!-- Left ribbon tail -->
+                        <path d="M 46 38 L 30 60 L 40 55 Z" fill="#ff769f" stroke="#e0527f" stroke-width="2"/>
+                        <!-- Right ribbon tail -->
+                        <path d="M 54 38 L 70 60 L 60 55 Z" fill="#ff769f" stroke="#e0527f" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-pink-900 text-lg mb-1">Pita Rambut Berwarna:</h3>
+                    <p class="text-gray-700 text-sm">
+                        Ada <span class="bg-pink-100 px-2 py-0.5 rounded font-bold text-pink-800">4 boks penyimpanan</span>. Di dalam setiap boks disimpan <span class="bg-pink-100 px-2 py-0.5 rounded font-bold text-pink-800">14 jepit pita merah</span>.
+                    </p>
+                    <p class="text-sm text-gray-600 mt-2">
+                        Mari kita kalikan satuannya terlebih dahulu: <span class="font-mono text-pink-600">4 × 4 = 16</span>.
+                        Nah, karena angka <span class="underline">16</span> terlalu besar untuk satu kotak satuan, bagaimana cara menulisnya?
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200">
+                <p class="text-sm text-yellow-900 font-bold">💡 Trik Menyimpan Ajaib Princess:</p>
+                <p class="text-xs text-gray-700 mt-1">
+                    "Tulis angka satuannya (<strong class="text-pink-600 text-sm">6</strong>) di kolom jawaban bawah, lalu terbangkan angka puluhannya (<strong class="text-purple-600 text-sm">1</strong>) ke atas kepala puluhan teman di sampingnya!"
+                </p>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 12: DETAIL VISUAL TEKNIK MENYIMPAN
+             ============================================== -->
+        <div class="slide" id="slide-12">
+            <h2 class="heading-font text-2xl text-purple-600 mb-2">📸 Langkah Detail Teknik Menyimpan</h2>
+            <p class="text-gray-700 mb-6">Yuk perhatikan posisi angka "tabungan 1" yang ditaruh di atas kepala puluhan.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div class="bg-purple-50 p-6 rounded-2xl border-2 border-purple-200 text-center">
+                    <div class="math-grid text-gray-800">
+                        <span class="text-pink-500 text-sm absolute top-0 right-10" style="font-size: 16px;">⁽¹⁾</span>
+                        14<br>
+                        4<br>
+                        <div class="math-line"><span class="math-sign">×</span></div>
+                        <span class="font-extrabold text-green-500">5</span>6
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-white p-4 rounded-xl border border-gray-100">
+                        <p class="text-sm text-gray-700"><strong>Langkah Satuan:</strong> 4 × 4 = 16. Tulis angka <strong class="text-green-500">6</strong> di bagian bawah, simpan <strong class="text-pink-500">1</strong> di atas.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-gray-100">
+                        <p class="text-sm text-gray-700"><strong>Langkah Puluhan:</strong> 1 × 4 = 4. Lalu tambahkan tabungan simpanan tadi: 4 + <strong class="text-pink-500">1</strong> = <strong class="text-green-500">5</strong>.</p>
+                    </div>
+                    <p class="text-sm font-bold text-purple-800">Sehingga total pita rambut Kak Cici ada 56 buah pita! Sangat rapi! 🎀</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 13: REAL-WORLD CONNECTION 3 (PAKET BUKU GAMBAR KAK DWI)
+             ============================================== -->
+        <div class="slide" id="slide-13">
+            <h2 class="heading-font text-2xl text-purple-600 mb-2 flex items-center gap-2">🎨 Hubungan Nyata 3: Buku Gambar Kak Dwi</h2>
+            <p class="text-gray-700 mb-4">
+                Terakhir, mari kita temui **Kak Dwi** yang sedang menata buku mewarnai indah di sudut perpustakaan!
+            </p>
+
+            <div class="flex flex-col md:flex-row items-center gap-6 bg-pink-50 p-6 rounded-2xl border border-pink-200 mb-6">
+                <div class="flex-shrink-0">
+                    <svg width="120" height="90" viewBox="0 0 100 80">
+                        <!-- Book Stack SVG -->
+                        <rect x="20" y="40" width="60" height="15" rx="2" fill="#a29bfe" stroke="#6c5ce7" stroke-width="2"/>
+                        <rect x="25" y="25" width="60" height="15" rx="2" fill="#ff769f" stroke="#e0527f" stroke-width="2"/>
+                        <rect x="30" y="10" width="60" height="15" rx="2" fill="#ffeaa7" stroke="#feca57" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-pink-900 text-lg mb-1">Buku Mewarnai Istana:</h3>
+                    <p class="text-gray-700 text-sm">
+                        Ada <span class="bg-pink-100 px-2 py-0.5 rounded font-bold text-pink-800">5 paket kardus</span>. Tiap kardus berisi <span class="bg-pink-100 px-2 py-0.5 rounded font-bold text-pink-800">25 buku mewarnai princess</span> yang tebal.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                        Berapakah jumlah buku semuanya? Mari kita hitung menggunakan perkalian bersusun dan teknik menyimpan dengan teliti.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-purple-50 p-5 rounded-xl border border-purple-200 text-center">
+                <p class="text-sm text-purple-800 font-semibold mb-2">Yuk kerjakan bersama: <strong>25 × 5</strong></p>
+                <div class="flex justify-center items-center gap-3">
+                    <input type="number" id="con3-q" class="w-24 text-center text-lg p-2 border-2 border-purple-300 rounded-xl focus:outline-none">
+                    <button onclick="checkGeneric('con3-q', 125, 'ans-con3')" class="bg-purple-500 text-white font-bold py-2 px-6 rounded-xl">Cek Jawaban</button>
+                </div>
+                <div id="ans-con3" class="mt-2 text-sm font-bold"></div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 14: LATIHAN MANDIRI 1 (TANPA MENYIMPAN)
+             ============================================== -->
+        <div class="slide" id="slide-14">
+            <h2 class="heading-font text-2xl text-pink-600 mb-2">🌸 Tantangan Mandiri 1 (Tanpa Menyimpan)</h2>
+            <p class="text-gray-700 mb-6">Saatnya membuktikan kehebatan masing-masing anak secara mandiri!</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Anak 1 -->
+                <div class="p-6 bg-pink-50/30 border-2 border-pink-200 rounded-2xl text-center">
+                    <span class="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p1-badge">Pemain 1</span>
+                    <p class="text-sm text-gray-600 mb-2">Coba hitung:</p>
+                    <div class="math-grid text-gray-800">
+                        13<br>
+                        3<br>
+                        <div class="math-line"><span class="math-sign">×</span></div>
+                    </div>
+                    <div class="flex justify-center items-center gap-2 mt-4">
+                        <input type="number" id="ind-q1" class="w-24 text-center p-2 border-2 border-pink-300 rounded-xl">
+                        <button onclick="checkIndividual('ind-q1', 39, 'ans-ind1', 1)" class="bg-pink-500 text-white font-bold py-2 px-4 rounded-xl">Selesai</button>
+                    </div>
+                    <div id="ans-ind1" class="mt-2 text-sm font-bold min-h-[20px]"></div>
+                </div>
+
+                <!-- Anak 2 -->
+                <div class="p-6 bg-purple-50/30 border-2 border-purple-200 rounded-2xl text-center">
+                    <span class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p2-badge">Pemain 2</span>
+                    <p class="text-sm text-gray-600 mb-2">Coba hitung:</p>
+                    <div class="math-grid text-gray-800">
+                        24<br>
+                        2<br>
+                        <div class="math-line"><span class="math-sign">×</span></div>
+                    </div>
+                    <div class="flex justify-center items-center gap-2 mt-4">
+                        <input type="number" id="ind-q2" class="w-24 text-center p-2 border-2 border-purple-300 rounded-xl">
+                        <button onclick="checkIndividual('ind-q2', 48, 'ans-ind2', 2)" class="bg-purple-500 text-white font-bold py-2 px-4 rounded-xl">Selesai</button>
+                    </div>
+                    <div id="ans-ind2" class="mt-2 text-sm font-bold min-h-[20px]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 15: LATIHAN MANDIRI 2 (TEKNIK MENYIMPAN)
+             ============================================== -->
+        <div class="slide" id="slide-15">
+            <h2 class="heading-font text-2xl text-purple-600 mb-2">🌸 Tantangan Mandiri 2 (Dengan Menyimpan)</h2>
+            <p class="text-gray-700 mb-6">Awas! Tantangan kali ini memerlukan fokus tinggi untuk trik menyimpan.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Anak 1 -->
+                <div class="p-6 bg-pink-50/30 border-2 border-pink-200 rounded-2xl text-center">
+                    <span class="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p1-badge">Pemain 1</span>
+                    <p class="text-sm text-gray-600 mb-2">Kerjakan dengan sabar:</p>
+                    <div class="math-grid text-gray-800 text-right">
+                        18<br>
+                        4<br>
+                        <div class="math-line"><span class="math-sign">×</span></div>
+                    </div>
+                    <div class="flex justify-center items-center gap-2 mt-4">
+                        <input type="number" id="ind-q3" class="w-24 text-center p-2 border-2 border-pink-300 rounded-xl">
+                        <button onclick="checkIndividual('ind-q3', 72, 'ans-ind3', 1)" class="bg-pink-500 text-white font-bold py-2 px-4 rounded-xl">Selesai</button>
+                    </div>
+                    <div id="ans-ind3" class="mt-2 text-sm font-bold min-h-[20px]"></div>
+                </div>
+
+                <!-- Anak 2 -->
+                <div class="p-6 bg-purple-50/30 border-2 border-purple-200 rounded-2xl text-center">
+                    <span class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p2-badge">Pemain 2</span>
+                    <p class="text-sm text-gray-600 mb-2">Kerjakan dengan sabar:</p>
+                    <div class="math-grid text-gray-800 text-right">
+                        16<br>
+                        3<br>
+                        <div class="math-line"><span class="math-sign">×</span></div>
+                    </div>
+                    <div class="flex justify-center items-center gap-2 mt-4">
+                        <input type="number" id="ind-q4" class="w-24 text-center p-2 border-2 border-purple-300 rounded-xl">
+                        <button onclick="checkIndividual('ind-q4', 48, 'ans-ind4', 2)" class="bg-purple-500 text-white font-bold py-2 px-4 rounded-xl">Selesai</button>
+                    </div>
+                    <div id="ans-ind4" class="mt-2 text-sm font-bold min-h-[20px]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 16: DETEKTIF MATEMATIKA: ANGKA HILANG!
+             ============================================== -->
+        <div class="slide" id="slide-16">
+            <h2 class="heading-font text-2xl text-amber-500 mb-2 flex items-center gap-2">🕵️ Game Detektif: Cari Angka yang Hilang!</h2>
+            <p class="text-gray-700 mb-6">Oh tidak! Ada tumpahan es sirup stroberi yang menghapus sebagian angka perkalian ini. Mari bantu temukan angka rahasia yang tersembunyi!</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Case 1 (Anak 1) -->
+                <div class="p-6 bg-white border-2 border-amber-200 rounded-2xl text-center">
+                    <span class="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p1-badge">Pemain 1</span>
+                    <div class="math-grid text-gray-800">
+                        2 <span class="text-pink-500 font-extrabold">?</span><br>
+                        3<br>
+                        <div class="math-line"><span class="math-sign">×</span></div>
+                        6 9
+                    </div>
+                    <p class="text-xs text-gray-500 mb-4">Angka berapa yang tepat untuk menggantikan tanda tanya (?) di atas?</p>
+                    <div class="flex justify-center items-center gap-2">
+                        <input type="number" id="det-q1" class="w-24 text-center p-2 border-2 border-amber-300 rounded-xl">
+                        <button onclick="checkIndividual('det-q1', 3, 'ans-det1', 1)" class="bg-amber-500 text-white font-bold py-2 px-4 rounded-xl">Tebak</button>
+                    </div>
+                    <div id="ans-det1" class="mt-2 text-sm font-bold min-h-[20px]"></div>
+                </div>
+
+                <!-- Case 2 (Anak 2) -->
+                <div class="p-6 bg-white border-2 border-amber-200 rounded-2xl text-center">
+                    <span class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p2-badge">Pemain 2</span>
+                    <div class="math-grid text-gray-800">
+                        3 <span class="text-purple-500 font-extrabold">?</span><br>
+                        2<br>
+                        <div class="math-line"><span class="math-sign">×</span></div>
+                        6 8
+                    </div>
+                    <p class="text-xs text-gray-500 mb-4">Angka berapa yang tepat untuk menggantikan tanda tanya (?) di atas?</p>
+                    <div class="flex justify-center items-center gap-2">
+                        <input type="number" id="det-q2" class="w-24 text-center p-2 border-2 border-amber-300 rounded-xl">
+                        <button onclick="checkIndividual('det-q2', 4, 'ans-det2', 2)" class="bg-amber-500 text-white font-bold py-2 px-4 rounded-xl">Tebak</button>
+                    </div>
+                    <div id="ans-det2" class="mt-2 text-sm font-bold min-h-[20px]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 17: UJIAN FINAL KELULUSAN (ROUND 1)
+             ============================================== -->
+        <div class="slide" id="slide-17">
+            <h2 class="heading-font text-2xl text-indigo-600 mb-2">🎓 Ujian Kelulusan Utama (Babak 1 dari 3)</h2>
+            <p class="text-gray-700 mb-6">Inilah ujian penentuan kelayakan kalian mendapatkan mahkota Ratu Perkalian Bersusun!</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Anak 1 -->
+                <div class="p-6 bg-indigo-50/30 border-2 border-indigo-200 rounded-2xl text-center">
+                    <span class="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p1-badge">Pemain 1</span>
+                    <p class="font-bold text-gray-800 mb-4">Berapakah: <br><span class="text-xl text-pink-600 font-mono">32 × 4</span></p>
+                    <div class="flex justify-center items-center gap-2">
+                        <input type="number" id="fn-q1" class="w-28 text-center p-2 border-2 border-indigo-300 rounded-xl">
+                        <button onclick="checkIndividual('fn-q1', 128, 'ans-fn1', 1)" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-xl">Kunci</button>
+                    </div>
+                    <div id="ans-fn1" class="mt-2 text-sm font-bold min-h-[20px]"></div>
+                </div>
+
+                <!-- Anak 2 -->
+                <div class="p-6 bg-indigo-50/30 border-2 border-indigo-200 rounded-2xl text-center">
+                    <span class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p2-badge">Pemain 2</span>
+                    <p class="font-bold text-gray-800 mb-4">Berapakah: <br><span class="text-xl text-purple-600 font-mono">23 × 3</span></p>
+                    <div class="flex justify-center items-center gap-2">
+                        <input type="number" id="fn-q2" class="w-28 text-center p-2 border-2 border-indigo-300 rounded-xl">
+                        <button onclick="checkIndividual('fn-q2', 69, 'ans-fn2', 2)" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-xl">Kunci</button>
+                    </div>
+                    <div id="ans-fn2" class="mt-2 text-sm font-bold min-h-[20px]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 18: UJIAN FINAL KELULUSAN (ROUND 2)
+             ============================================== -->
+        <div class="slide" id="slide-18">
+            <h2 class="heading-font text-2xl text-indigo-600 mb-2">🎓 Ujian Kelulusan Utama (Babak 2 dari 3)</h2>
+            <p class="text-gray-700 mb-6">Hebat! Mari tingkatkan konsentrasi, tantangannya sedikit bertambah.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Anak 1 -->
+                <div class="p-6 bg-indigo-50/30 border-2 border-indigo-200 rounded-2xl text-center">
+                    <span class="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p1-badge">Pemain 1</span>
+                    <p class="font-bold text-gray-800 mb-4">Berapakah: <br><span class="text-xl text-pink-600 font-mono">45 × 2</span></p>
+                    <div class="flex justify-center items-center gap-2">
+                        <input type="number" id="fn-q3" class="w-28 text-center p-2 border-2 border-indigo-300 rounded-xl">
+                        <button onclick="checkIndividual('fn-q3', 90, 'ans-fn3', 1)" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-xl">Kunci</button>
+                    </div>
+                    <div id="ans-fn3" class="mt-2 text-sm font-bold min-h-[20px]"></div>
+                </div>
+
+                <!-- Anak 2 -->
+                <div class="p-6 bg-indigo-50/30 border-2 border-indigo-200 rounded-2xl text-center">
+                    <span class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p2-badge">Pemain 2</span>
+                    <p class="font-bold text-gray-800 mb-4">Berapakah: <br><span class="text-xl text-purple-600 font-mono">15 × 6</span></p>
+                    <div class="flex justify-center items-center gap-2">
+                        <input type="number" id="fn-q4" class="w-28 text-center p-2 border-2 border-indigo-300 rounded-xl">
+                        <button onclick="checkIndividual('fn-q4', 90, 'ans-fn4', 2)" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-xl">Kunci</button>
+                    </div>
+                    <div id="ans-fn4" class="mt-2 text-sm font-bold min-h-[20px]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 19: UJIAN FINAL KELULUSAN (ROUND 3)
+             ============================================== -->
+        <div class="slide" id="slide-19">
+            <h2 class="heading-font text-2xl text-indigo-600 mb-2">🎓 Ujian Kelulusan Utama (Babak 3 dari 3)</h2>
+            <p class="text-gray-700 mb-6">Soal pemungkas penentu gelar Ratu Matematika! Kerjakan dengan santai dan teliti.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Anak 1 -->
+                <div class="p-6 bg-indigo-50/30 border-2 border-indigo-200 rounded-2xl text-center">
+                    <span class="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p1-badge">Pemain 1</span>
+                    <p class="font-bold text-gray-800 mb-4">Berapakah: <br><span class="text-xl text-pink-600 font-mono">26 × 5</span></p>
+                    <div class="flex justify-center items-center gap-2">
+                        <input type="number" id="fn-q5" class="w-28 text-center p-2 border-2 border-indigo-300 rounded-xl">
+                        <button onclick="checkIndividual('fn-q5', 130, 'ans-fn5', 1)" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-xl">Kunci</button>
+                    </div>
+                    <div id="ans-fn5" class="mt-2 text-sm font-bold min-h-[20px]"></div>
+                </div>
+
+                <!-- Anak 2 -->
+                <div class="p-6 bg-indigo-50/30 border-2 border-indigo-200 rounded-2xl text-center">
+                    <span class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold mb-3 p2-badge">Pemain 2</span>
+                    <p class="font-bold text-gray-800 mb-4">Berapakah: <br><span class="text-xl text-purple-600 font-mono">35 × 4</span></p>
+                    <div class="flex justify-center items-center gap-2">
+                        <input type="number" id="fn-q6" class="w-28 text-center p-2 border-2 border-indigo-300 rounded-xl">
+                        <button onclick="checkIndividual('fn-q6', 140, 'ans-fn6', 2)" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-xl">Kunci</button>
+                    </div>
+                    <div id="ans-fn6" class="mt-2 text-sm font-bold min-h-[20px]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             SLIDE 20: JURNAL REFLEKSI & SELESAI
+             ============================================== -->
+        <div class="slide" id="slide-20">
+            <div class="text-center">
+                <h1 class="heading-font text-4xl text-purple-600 animate-pulse mb-2">👑 SELAMAT! 👑</h1>
+                <p class="text-gray-700 font-semibold mb-6">Kalian berdua telah luar biasa menyelesaikan semua petualangan perkalian bersusun!</p>
+                
+                <!-- Winner announcement box -->
+                <div class="max-w-md mx-auto bg-gradient-to-r from-pink-50 to-purple-100 border-2 border-pink-300 p-6 rounded-3xl mb-8 shadow-sm">
+                    <span class="text-4xl">👑</span>
+                    <h3 class="heading-font text-xl text-pink-700 mt-2">Duo Ratu Perkalian Cerdas:</h3>
+                    <p id="winner-text" class="text-gray-700 font-bold mt-1">Bilqis & Hafizah</p>
+                    
+                    <div class="flex justify-around items-center mt-4 pt-4 border-t border-pink-200">
+                        <div>
+                            <p class="text-xs text-gray-500">Skor Akhir 1</p>
+                            <p id="final-p1-score" class="font-bold text-lg text-pink-600">0 Bunga</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Skor Akhir 2</p>
+                            <p id="final-p2-score" class="font-bold text-lg text-purple-600">0 Bunga</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reflection Buttons -->
+                <div class="mb-6">
+                    <p class="text-sm font-bold text-gray-700 mb-3">Bagaimana perasaan putri-putri cantik setelah belajar bersama hari ini?</p>
+                    <div class="flex justify-center gap-4 flex-wrap">
+                        <button onclick="setReflection('Seru sekali! Kami ingin bermain lagi! 😍')" class="bg-white border-2 border-pink-200 hover:bg-pink-50 text-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition">😍 Seru & Menyenangkan!</button>
+                        <button onclick="setReflection('Bagus, kami sekarang lebih mengerti. 👍')" class="bg-white border-2 border-purple-200 hover:bg-purple-50 text-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition">👍 Mulai Paham</button>
+                        <button onclick="setReflection('Kami mau latihan lagi nanti! 💪')" class="bg-white border-2 border-yellow-200 hover:bg-yellow-50 text-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition">💪 Butuh Review</button>
+                    </div>
+                    <div id="reflection-feedback" class="mt-3 text-sm font-bold text-green-600 min-h-[20px]"></div>
+                </div>
+
+                <button onclick="resetGame()" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full shadow-md">Ulangi Petualangan 🔄</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Sketchpad / Papan Coret Digital Terintegrasi -->
+    <div id="sketchpad-container" class="mt-6 border-2 border-dashed border-pink-200 rounded-2xl p-4 bg-pink-50/30 hidden">
+        <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-bold text-pink-600 flex items-center gap-1">📋 Papan Coret-Coret Princess (Membantu Hitung Bersusun)</span>
+            <button onclick="clearCanvas()" class="text-xs bg-pink-200 hover:bg-pink-300 text-pink-700 px-2.5 py-1 rounded-md font-semibold">Hapus Coretan 🧹</button>
+        </div>
+        <canvas id="scratch-canvas" class="w-full h-24 bg-white border border-pink-200 rounded-xl cursor-crosshair"></canvas>
+    </div>
+
+    <!-- Navigation Footer -->
+    <div class="flex justify-between items-center mt-6 pt-4 border-t-2 border-dashed border-pink-100">
+        <button id="prevBtn" onclick="changeSlide(-1)" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2.5 px-6 rounded-full transition text-sm disabled:opacity-50 disabled:pointer-events-none">
+            ⬅️ Sebelumnya
+        </button>
+        <button id="nextBtn" onclick="changeSlide(1)" class="bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white font-bold py-2.5 px-8 rounded-full transition text-sm shadow-md">
+            Berikutnya ➡️
+        </button>
+    </div>
+
+</div>
+
+<!-- Custom Message Box instead of standard Window Alerts -->
+<div id="custom-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl border-4 border-pink-200">
+        <p id="modal-text" class="text-gray-800 font-bold text-lg mb-4"></p>
+        <button onclick="closeModal()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-xl text-sm transition">OK, Mengerti!</button>
+    </div>
+</div>
+
+<script>
+    // Game state
+    let p1Name = "Bilqis";
+    let p2Name = "Hafizah";
+    let p1Score = 0;
+    let p2Score = 0;
+    
+    let currentSlide = 1;
+    const totalSlides = 20;
+
+    // Track which question has been scored to prevent double points
+    const answeredQuestions = {};
+
+    // Run setup on load
+    window.onload = function() {
+        initCanvas();
+        updateUI();
+    };
+
+    function startGame() {
+        // Fetch values
+        const name1 = document.getElementById('p1-input').value.trim();
+        const name2 = document.getElementById('p2-input').value.trim();
+
+        if (!name1 || !name2) {
+            showModal("Silakan ketik nama kedua anak perempuan terlebih dahulu ya!");
+            return;
+        }
+
+        p1Name = name1;
+        p2Name = name2;
+
+        // Update display badges on all pages dynamically
+        updateBadges();
+
+        // Show header
+        document.getElementById('top-scoreboard').classList.remove('hidden');
+        document.getElementById('sketchpad-container').classList.remove('hidden');
+        
+        // Go to slide 2
+        changeSlide(1);
+    }
+
+    function updateBadges() {
+        // Set Header names
+        document.getElementById('p1-display-name').innerText = p1Name;
+        document.getElementById('p2-display-name').innerText = p2Name;
+
+        // Update specific text labels
+        document.querySelectorAll('.p1-badge').forEach(badge => badge.innerText = "👧 Soal " + p1Name);
+        document.querySelectorAll('.p2-badge').forEach(badge => badge.innerText = "👱‍♀️ Soal " + p2Name);
+    }
+
+    function changeSlide(direction) {
+        // Boundary enforcement
+        const targetSlide = currentSlide + direction;
+        if (targetSlide < 1 || targetSlide > totalSlides) return;
+
+        // Prevent moving past first slide without clicking 'Mulai Petualangan' properly
+        if (currentSlide === 1 && direction > 0 && (p1Name === "Bilqis" || p2Name === "Hafizah")) {
+            // Force setting defaults if skipped
+            p1Name = document.getElementById('p1-input').value.trim() || "Bilqis";
+            p2Name = document.getElementById('p2-input').value.trim() || "Hafizah";
+            updateBadges();
+            document.getElementById('top-scoreboard').classList.remove('hidden');
+            document.getElementById('sketchpad-container').classList.remove('hidden');
+        }
+
+        // Hide current active slide
+        document.getElementById(`slide-${currentSlide}`).classList.remove('active');
+        
+        // Show target slide
+        document.getElementById(`slide-${targetSlide}`).classList.add('active');
+        currentSlide = targetSlide;
+
+        updateUI();
+    }
+
+    function updateUI() {
+        // Indicators
+        document.getElementById('page-indicator').innerText = `Halaman ${currentSlide} / ${totalSlides}`;
+        document.getElementById('progress-bar').style.width = `${(currentSlide / totalSlides) * 100}%`;
+
+        // Scores
+        document.getElementById('p1-score').innerText = p1Score;
+        document.getElementById('p2-score').innerText = p2Score;
+
+        // Navigation button logic
+        document.getElementById('prevBtn').disabled = (currentSlide <= 1);
+        
+        if (currentSlide === totalSlides) {
+            document.getElementById('nextBtn').classList.add('hidden');
+            // Show final scores
+            document.getElementById('final-p1-score').innerText = `${p1Score} Bunga 🌸`;
+            document.getElementById('final-p2-score').innerText = `${p2Score} Bunga 🌸`;
+            document.getElementById('winner-text').innerHTML = `${p1Name} (👧 ${p1Score} 🌸) &amp; ${p2Name} (👱‍♀️ ${p2Score} 🌸)`;
+        } else {
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        // Redraw canvas on view change
+        resizeCanvas();
+    }
+
+    // Checking warm-up responses
+    function checkWarmUp(inputId, correctAnswer, feedbackId, playerNum) {
+        const inputVal = parseInt(document.getElementById(inputId).value);
+        const feedback = document.getElementById(feedbackId);
+        
+        if (isNaN(inputVal)) {
+            feedback.innerHTML = "⚠️ Masukkan angka jawaban!";
+            feedback.className = "mt-3 text-sm font-bold text-amber-500";
+            return;
+        }
+
+        const playerName = (playerNum === 1) ? p1Name : p2Name;
+
+        if (inputVal === correctAnswer) {
+            feedback.innerHTML = `🎉 Benar, ${playerName}! Hebat sekali!`;
+            feedback.className = "mt-3 text-sm font-bold text-green-500";
+            
+            // Allocate points
+            awardPoints(inputId, playerNum);
+        } else {
+            feedback.innerHTML = `❌ Oops, hitung kembali ya ${playerName}!`;
+            feedback.className = "mt-3 text-sm font-bold text-red-500";
+        }
+    }
+
+    // Checking connection responses (cooperative/shared)
+    function checkGeneric(inputId, correctAnswer, feedbackId) {
+        const inputVal = parseInt(document.getElementById(inputId).value);
+        const feedback = document.getElementById(feedbackId);
+
+        if (isNaN(inputVal)) {
+            feedback.innerHTML = "⚠️ Isilah jawaban terlebih dahulu ya!";
+            feedback.className = "mt-2 text-sm font-bold text-amber-500";
+            return;
+        }
+
+        if (inputVal === correctAnswer) {
+            feedback.innerHTML = "✨ Kerja Bagus! Jawaban kalian BENAR! Hadiah masing-masing 10 Bunga Cantik! 🎉";
+            feedback.className = "mt-2 text-sm font-bold text-green-500";
+
+            // Reward both
+            if (!answeredQuestions[inputId]) {
+                p1Score += 10;
+                p2Score += 10;
+                answeredQuestions[inputId] = true;
+                updateUI();
+            }
+        } else {
+            feedback.innerHTML = "❌ Hmm, jawabannya belum pas. Yuk coba hitung pelan-pelan lagi.";
+            feedback.className = "mt-2 text-sm font-bold text-red-500";
+        }
+    }
+
+    // Checking individual exercise responses
+    function checkIndividual(inputId, correctAnswer, feedbackId, playerNum) {
+        const inputVal = parseInt(document.getElementById(inputId).value);
+        const feedback = document.getElementById(feedbackId);
+
+        if (isNaN(inputVal)) {
+            feedback.innerHTML = "⚠️ Isi angka jawaban!";
+            feedback.className = "mt-2 text-sm font-bold text-amber-500";
+            return;
+        }
+
+        const playerName = (playerNum === 1) ? p1Name : p2Name;
+
+        if (inputVal === correctAnswer) {
+            feedback.innerHTML = `🌟 Keren, ${playerName}! Jawabanmu Betul! +10 Bunga!`;
+            feedback.className = "mt-2 text-sm font-bold text-green-500";
+            awardPoints(inputId, playerNum);
+        } else {
+            feedback.innerHTML = `❌ Kurang tepat, ${playerName}. Ayo hitung coretanmu lagi!`;
+            feedback.className = "mt-2 text-sm font-bold text-red-500";
+        }
+    }
+
+    function awardPoints(questionId, playerNum) {
+        if (!answeredQuestions[questionId]) {
+            if (playerNum === 1) {
+                p1Score += 10;
+            } else {
+                p2Score += 10;
+            }
+            answeredQuestions[questionId] = true;
+            updateUI();
+        }
+    }
+
+    function setReflection(feedbackText) {
+        document.getElementById('reflection-feedback').innerText = `Terima kasih masukannya: "${feedbackText}" ❤️`;
+    }
+
+    function resetGame() {
+        p1Score = 0;
+        p2Score = 0;
+        currentSlide = 1;
+        // Reset inputs
+        const inputs = document.querySelectorAll('input[type="number"]');
+        inputs.forEach(input => input.value = "");
+        const feedbacks = document.querySelectorAll('[id^="ans-"]');
+        feedbacks.forEach(fb => fb.innerText = "");
+        document.getElementById('reflection-feedback').innerText = "";
+
+        // Clear answered tracker
+        for (let key in answeredQuestions) {
+            delete answeredQuestions[key];
+        }
+
+        // Hide score & canvas initially
+        document.getElementById('top-scoreboard').classList.add('hidden');
+        document.getElementById('sketchpad-container').classList.add('hidden');
+
+        updateUI();
+    }
+
+    // Modals
+    function showModal(text) {
+        document.getElementById('modal-text').innerText = text;
+        document.getElementById('custom-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('custom-modal').classList.add('hidden');
+    }
+
+    // ==============================================
+    // CANVAS SKETCHPAD LOGIC
+    // ==============================================
+    let canvas, ctx;
+    let isDrawing = false;
+
+    function initCanvas() {
+        canvas = document.getElementById('scratch-canvas');
+        ctx = canvas.getContext('2d');
+
+        // Mouse events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events for mobile/tablet devices
+        canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+        canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+        canvas.addEventListener('touchend', stopDrawing);
+
+        resizeCanvas();
+    }
+
+    function resizeCanvas() {
+        if (canvas && canvas.parentElement) {
+            const width = canvas.parentElement.clientWidth - 32; // deduct padding
+            canvas.width = width;
+            canvas.height = 120; // fixed comfortable drawing height
+            
+            // Retain styling
+            ctx.strokeStyle = '#9b5de5'; // purple princess stylus
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+        }
+    }
+
+    function startDrawing(e) {
+        isDrawing = true;
+        ctx.beginPath();
+        ctx.moveTo(e.offsetX, e.offsetY);
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+    }
+
+    function handleTouchStart(e) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        isDrawing = true;
+        ctx.beginPath();
+        ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    }
+
+    function handleTouchMove(e) {
+        e.preventDefault();
+        if (!isDrawing) return;
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        ctx.stroke();
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+</script>
+</body>
+</html>

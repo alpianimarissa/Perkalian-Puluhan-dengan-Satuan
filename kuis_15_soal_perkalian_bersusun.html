@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis 15 Soal Perkalian Bersusun - Princess Cerdas</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #ffeef2; /* Light magical pastel pink */
+        }
+        .heading-font {
+            font-family: 'Fredoka One', cursive;
+        }
+        .math-grid {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 34px;
+            font-weight: bold;
+            margin: 15px auto;
+            width: fit-content;
+            text-align: right;
+            letter-spacing: 12px;
+            line-height: 1.5;
+            position: relative;
+        }
+        .math-line {
+            border-bottom: 5px solid #2d3436;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            padding-right: 12px;
+            position: relative;
+        }
+        .math-sign {
+            position: absolute;
+            left: -30px;
+            bottom: -5px;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0.8;
+            border-radius: 50%;
+            animation: fall 3s linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-4 sm:p-6 relative overflow-x-hidden">
+
+<div id="confetti-container" class="absolute inset-0 pointer-events-none overflow-hidden hidden z-50"></div>
+
+<!-- Top Scoreboard (Visible after entering name) -->
+<div id="top-scoreboard" class="w-full max-w-4xl bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg border-2 border-pink-100 p-4 mb-4 mx-auto hidden">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <!-- Player Score Card -->
+        <div id="player-card" class="flex items-center gap-3 bg-pink-50 border-2 border-pink-200 px-5 py-2.5 rounded-2xl w-full sm:w-auto transition-all duration-300">
+            <div class="w-12 h-12 rounded-full bg-pink-400 flex items-center justify-center text-white text-2xl shadow-inner">👧</div>
+            <div>
+                <p id="player-display-name" class="font-bold text-sm text-pink-700">Alya</p>
+                <p class="text-xs text-pink-500 font-extrabold">Bunga Cantik: <span id="player-score" class="text-lg">0</span> 🌸</p>
+            </div>
+        </div>
+
+        <!-- Center Stage Information -->
+        <div class="text-center flex-grow">
+            <span class="heading-font text-pink-500 text-sm tracking-widest uppercase">🎀 KUIS MAHKOTA PERKALIAN 🎀</span>
+            <div class="w-full max-w-xs bg-pink-100 rounded-full h-3 mt-1.5 mx-auto overflow-hidden border border-pink-200">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-400 to-purple-500 h-3 transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <p id="question-index" class="text-xs font-black text-purple-600 mt-1">Soal 0 / 15</p>
+        </div>
+
+        <!-- Level Badge -->
+        <div class="bg-purple-50 border-2 border-purple-200 px-4 py-2 rounded-2xl text-center min-w-[120px]">
+            <span class="text-xs text-purple-500 font-bold block">Gelar Saat Ini</span>
+            <span id="rank-badge" class="font-extrabold text-sm text-purple-700">👑 Pemula</span>
+        </div>
+    </div>
+</div>
+
+<!-- Main Quiz Arena -->
+<div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl border-4 border-pink-200 p-6 sm:p-8 flex flex-col justify-between min-h-[580px] mx-auto relative z-10">
+    
+    <!-- Setup Screen (Name Input) -->
+    <div id="setup-screen" class="space-y-6">
+        <div class="text-center">
+            <div class="flex justify-center gap-4 mb-4">
+                <span class="text-6xl animate-bounce">👑</span>
+                <span class="text-6xl animate-bounce delay-150">✨</span>
+            </div>
+            <h1 class="heading-font text-3xl sm:text-4xl text-pink-600 mb-2">Ujian Mahkota Ratu Perkalian</h1>
+            <p class="text-gray-600 max-w-lg mx-auto">Selamat datang, Sahabat Pintar! Kuis ini berisi 15 soal perkalian bersusun interaktif yang dikemas manis. Yuk, ketik namamu untuk memulai petualangan matematika!</p>
+        </div>
+
+        <div class="max-w-md mx-auto mt-8">
+            <!-- Player Setup -->
+            <div class="bg-pink-50/70 p-6 rounded-2xl border-2 border-pink-200 text-center shadow-sm">
+                <div class="text-4xl mb-2">👧</div>
+                <label class="block text-pink-700 font-bold mb-2">Masukkan Nama Princess:</label>
+                <input type="text" id="player-name-input" value="Alya" placeholder="Nama Princess" class="w-full text-center p-3 rounded-xl border-2 border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 font-semibold text-gray-700 text-lg">
+            </div>
+        </div>
+
+        <div class="text-center pt-4">
+            <button onclick="startQuiz()" class="heading-font bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-xl py-4 px-12 rounded-full shadow-lg transform hover:-translate-y-1 transition duration-200">
+                Mulai Kuis Seru! 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- Quiz Panel (Hidden initially) -->
+    <div id="quiz-panel" class="hidden flex-grow flex flex-col justify-between">
+        
+        <!-- Turn Indicator Banner -->
+        <div id="turn-banner" class="w-full text-center py-2.5 px-4 rounded-2xl mb-6 text-sm sm:text-base font-bold transition-all duration-300">
+            <!-- Dynamic helper/encouraging text here -->
+        </div>
+
+        <!-- Question Display Area -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center my-auto">
+            <!-- Math Grid Column -->
+            <div class="bg-pink-50/30 p-6 rounded-2xl border-2 border-dashed border-pink-200 flex justify-center items-center min-h-[220px]">
+                <div id="math-display">
+                    <!-- Math Grid rendered here -->
+                </div>
+            </div>
+
+            <!-- Answer Input & Help Column -->
+            <div class="space-y-4">
+                <div class="bg-purple-50/40 p-4 rounded-xl border border-purple-100">
+                    <p id="question-text" class="text-gray-700 font-semibold text-base sm:text-lg">
+                        <!-- Question text here -->
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Masukkan Jawaban Akhir:</label>
+                    <div class="flex gap-3">
+                        <input type="number" id="quiz-answer" placeholder="Hasil..." class="w-full text-center text-2xl font-bold p-3 border-3 border-pink-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        <button onclick="submitAnswer()" class="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-extrabold px-8 rounded-2xl transition shadow-md whitespace-nowrap">
+                            Kirim Jawaban 🌟
+                        </button>
+                    </div>
+                </div>
+
+                <div id="quick-tip" class="p-3 bg-yellow-50 border border-yellow-100 rounded-xl text-xs text-yellow-800">
+                    <!-- Dynamic tip -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Sketchpad Container Inside Quiz Panel -->
+        <div id="scratch-area" class="mt-6 border-2 border-dashed border-pink-100 rounded-2xl p-4 bg-pink-50/20">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-bold text-pink-600 flex items-center gap-1">📋 Papan Coret-Coret Princess (Membantu Hitung Bersusun)</span>
+                <button onclick="clearCanvas()" class="text-xs bg-pink-200 hover:bg-pink-300 text-pink-700 px-3 py-1 rounded-md font-bold transition">Bersihkan 🧹</button>
+            </div>
+            <canvas id="scratch-canvas" class="w-full h-24 bg-white border border-pink-100 rounded-xl cursor-crosshair"></canvas>
+        </div>
+    </div>
+
+    <!-- Final Score / Graduation Screen -->
+    <div id="final-screen" class="hidden text-center space-y-6 py-6">
+        <h1 class="heading-font text-4xl text-pink-600 animate-bounce">👑 PENOBATAN AGUNG 👑</h1>
+        <p class="text-gray-700 text-lg max-w-md mx-auto font-semibold">Selamat kepada Princess Hebat! Kamu telah berhasil memecahkan seluruh 15 Soal Perkalian Bersusun!</p>
+
+        <!-- Dynamic Winner Card -->
+        <div class="max-w-md mx-auto bg-gradient-to-br from-pink-50 via-white to-purple-50 border-4 border-double border-pink-300 p-8 rounded-3xl shadow-lg relative">
+            <div class="absolute -top-7 left-1/2 -translate-x-1/2 text-5xl">👑</div>
+            <h2 class="heading-font text-2xl text-pink-800 mt-2">Gelar Kelulusan Cerdas</h2>
+            <p id="winner-name-display" class="font-black text-2xl text-purple-700 mt-1">Alya</p>
+            
+            <div class="flex flex-col items-center mt-6 pt-6 border-t border-dashed border-pink-200">
+                <p class="text-sm text-gray-500">Skor Akhir Kamu</p>
+                <p id="end-player-score" class="font-extrabold text-4xl text-pink-500 mt-2">0 🌸</p>
+                <p id="graduation-rank-text" class="text-md text-purple-600 font-extrabold mt-4 px-4 py-1.5 bg-purple-100 rounded-full"></p>
+                <p id="motivational-end-text" class="text-xs text-gray-500 mt-3 max-w-xs"></p>
+            </div>
+        </div>
+
+        <div class="pt-4">
+            <button onclick="resetQuiz()" class="heading-font bg-gradient-to-r from-pink-500 to-purple-600 text-white text-lg py-3.5 px-10 rounded-full shadow-md hover:opacity-90 transition">
+                Mulai Kuis Baru 🔄
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Footer (Hidden on setup/final screens) -->
+    <div id="navigation-footer" class="hidden flex justify-between items-center mt-6 pt-4 border-t-2 border-dashed border-pink-100">
+        <button id="prevBtn" onclick="navigatePrev()" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-5 rounded-full text-xs transition disabled:opacity-50">
+            ⬅️ Kembali Sebelumnya
+        </button>
+        <button id="nextBtn" onclick="navigateNext()" class="bg-pink-100 hover:bg-pink-200 text-pink-700 font-bold py-2 px-5 rounded-full text-xs transition">
+            Lewati Berikutnya ➡️
+        </button>
+    </div>
+
+</div>
+
+<!-- Custom Message Modal (No Window Alert) -->
+<div id="custom-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50 transition-opacity">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border-4 border-pink-200 transform scale-95 transition-transform">
+        <div id="modal-emoji" class="text-5xl mb-2">🎉</div>
+        <p id="modal-title" class="heading-font text-lg text-pink-600 mb-1"></p>
+        <p id="modal-text" class="text-gray-600 font-semibold text-sm mb-4"></p>
+        <button onclick="closeModal()" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-2.5 px-8 rounded-xl text-sm transition shadow-md">OK, Lanjutkan!</button>
+    </div>
+</div>
+
+<script>
+    // 15 Multiplication Questions (Alternating & Graduated difficulty)
+    const questions = [
+        { id: 1, val1: 12, val2: 3, tip: "Kalikan satuan terlebih dahulu (2 × 3 = 6), kemudian puluhan (1 × 3 = 3)." },
+        { id: 2, val1: 21, val2: 4, tip: "Jangan terbalik, mulai dari 1 × 4, baru setelah itu 2 × 4." },
+        { id: 3, val1: 13, val2: 2, tip: "Perkalian satuan gampang: 3 × 2 = 6. Lalu puluhan: 1 × 2 = 2." },
+        { id: 4, val1: 32, val2: 3, tip: "32 × 3 tidak memerlukan penyimpanan. Semangat ya Princess!" },
+        { id: 5, val1: 15, val2: 3, tip: "Awas menyimpan! 5 × 3 = 15. Tulis 5, lalu taruh tabungan 1 di atas kepala angka 1." },
+        { id: 6, val1: 14, val2: 5, tip: "Pesta menyimpan! 4 × 5 = 20. Tulis 0 di bawah, simpan 2 di atas puluhan." },
+        { id: 7, val1: 26, val2: 2, tip: "Sederhana tapi teliti: 6 × 2 = 12 (simpan 1). 2 × 2 = 4 (tambah 1)." },
+        { id: 8, val1: 18, val2: 3, tip: "8 × 3 = 24. Tulis 4 di bawah, simpan 2 di atas kepala teman sebelahnya." },
+        { id: 9, val1: 34, val2: 4, tip: "Angka besar! 4 × 4 = 16. Simpan 1. Kemudian 3 × 4 = 12 ditambah tabungan 1." },
+        { id: 10, val1: 42, val2: 5, tip: "2 × 5 = 10 (simpan 1). 4 × 5 = 20 + 1 = 21. Tulis langsung 210 di bawah!" },
+        { id: 11, val1: 25, val2: 6, tip: "Ayo hitung perlahan: 5 × 6 = 30 (simpan 3). 2 × 6 = 12 + 3 = 15." },
+        { id: 12, val1: 53, val2: 3, tip: "Tanpa menyimpan tapi angkanya besar: 3 × 3 = 9. 5 × 3 = 15. Hasilnya ratusan!" },
+        { id: 13, val1: 64, val2: 2, tip: "Sangat mudah tapi butuh fokus: 4 × 2 = 8. 6 × 2 = 12." },
+        { id: 14, val1: 37, val2: 4, tip: "Menyimpan tinggi! 7 × 4 = 28 (simpan 2). 3 × 4 = 12 + 2." },
+        { id: 15, val1: 45, val2: 5, tip: "SOAL TERAKHIR! Berikan konsentrasi penuhmu untuk menyelesaikan mahkota emas perkalian!" }
+    ];
+
+    // App State
+    let playerName = "Alya";
+    let playerScore = 0;
+    let currentIdx = 0; // Current question index (0 to 14)
+    let solvedStatus = Array(15).fill(false); // Track if a question has been solved correctly
+
+    // Canvas Draw state
+    let canvas, ctx;
+    let isDrawing = false;
+
+    window.onload = function() {
+        initCanvas();
+    };
+
+    function startQuiz() {
+        // Fetch Name
+        const name = document.getElementById('player-name-input').value.trim();
+
+        if (!name) {
+            showCustomModal("Oops!", "Namamu tidak boleh kosong ya, Princess!", "❌");
+            return;
+        }
+
+        playerName = name;
+
+        // Apply name
+        document.getElementById('player-display-name').innerText = playerName;
+
+        // Transitions
+        document.getElementById('setup-screen').classList.add('hidden');
+        document.getElementById('top-scoreboard').classList.remove('hidden');
+        document.getElementById('quiz-panel').classList.remove('hidden');
+        document.getElementById('navigation-footer').classList.remove('hidden');
+
+        currentIdx = 0;
+        loadQuestion();
+        resizeCanvas();
+    }
+
+    function loadQuestion() {
+        const q = questions[currentIdx];
+
+        // Update progress indicators
+        document.getElementById('question-index').innerText = `Soal ${currentIdx + 1} / 15`;
+        document.getElementById('progress-bar').style.width = `${((currentIdx + 1) / 15) * 100}%`;
+
+        // Reset answer field
+        document.getElementById('quiz-answer').value = "";
+
+        // Check Turn/Support Banner
+        const banner = document.getElementById('turn-banner');
+        const playerCard = document.getElementById('player-card');
+
+        // Reset card highlight animation
+        playerCard.classList.remove('ring-4', 'ring-pink-400', 'scale-105');
+        playerCard.classList.add('ring-4', 'ring-pink-400', 'scale-105');
+
+        // Encourage message
+        if (currentIdx === 14) {
+            banner.innerHTML = `👑 SOAL EMAS: Ayo Princess <span class="underline">${playerName}</span>, satu langkah lagi menuju Mahkota Ratu Perkalian! 🌸`;
+            banner.className = "w-full text-center py-2.5 px-4 rounded-2xl mb-6 text-sm sm:text-base font-bold bg-amber-50 border border-amber-300 text-amber-700 animate-pulse";
+        } else {
+            banner.innerHTML = `👧 Semangat, Princess <span class="underline">${playerName}</span>! Selesaikan tantangan ini untuk mendapat bunga baru! 🌸`;
+            banner.className = "w-full text-center py-2.5 px-4 rounded-2xl mb-6 text-sm sm:text-base font-bold bg-pink-50 border border-pink-200 text-pink-700";
+        }
+
+        // Render Math Grid
+        let mathGridHTML = `
+            <div class="math-grid text-gray-800">
+                ${q.val1}<br>
+                ${q.val2}<br>
+                <div class="math-line"><span class="math-sign">×</span></div>
+            </div>
+        `;
+        document.getElementById('math-display').innerHTML = mathGridHTML;
+
+        // Render Text Question
+        document.getElementById('question-text').innerHTML = `
+            <strong class="text-pink-600 block mb-1">🎁 Tantangan #${currentIdx + 1}</strong>
+            Berapakah hasil perkalian bersusun dari <strong class="text-purple-700 font-bold">${q.val1} × ${q.val2}</strong>?
+        `;
+
+        // Render Tip
+        document.getElementById('quick-tip').innerHTML = `💡 <strong>Tips Pintar:</strong> ${q.tip}`;
+
+        // Disable/Enable Nav buttons
+        document.getElementById('prevBtn').disabled = (currentIdx === 0);
+        document.getElementById('nextBtn').innerText = (currentIdx === 14) ? "Ke Penobatan Kelulusan 👑" : "Lewati Berikutnya ➡️";
+
+        // Auto focus answer box
+        document.getElementById('quiz-answer').focus();
+    }
+
+    function submitAnswer() {
+        const q = questions[currentIdx];
+        const rawAns = document.getElementById('quiz-answer').value;
+        const userAns = parseInt(rawAns);
+
+        if (isNaN(userAns)) {
+            showCustomModal("Belum Diisi!", "Silakan masukkan angka jawabanmu terlebih dahulu ya sayang!", "🤔");
+            return;
+        }
+
+        const correctVal = q.val1 * q.val2;
+
+        if (userAns === correctVal) {
+            // Correct Answer!
+            const isFirstSolve = !solvedStatus[currentIdx];
+            solvedStatus[currentIdx] = true;
+
+            let successMsg = "";
+            if (isFirstSolve) {
+                playerScore += 10;
+            }
+            
+            successMsg = `Jawabanmu BENAR, Princess ${playerName}! Kamu berhak mendapatkan +10 Bunga Cantik! 🌸`;
+
+            // Trigger confetti
+            triggerConfetti();
+
+            // Refresh Scores & Badge Rank
+            updateScoresDisplay();
+            updateRankBadge();
+
+            showCustomModal("Luar Biasa!", successMsg, "🎉", () => {
+                if (currentIdx < 14) {
+                    currentIdx++;
+                    loadQuestion();
+                } else {
+                    showFinalScreen();
+                }
+            });
+
+        } else {
+            // Wrong Answer
+            showCustomModal("Oops, Belum Pas!", `Jangan menyerah ya ${playerName}. Coba coret-coret kembali jalannya perkalian di papan coretan bawah ini ya sayang.`, "🌸");
+        }
+    }
+
+    function updateScoresDisplay() {
+        document.getElementById('player-score').innerText = playerScore;
+    }
+
+    function updateRankBadge() {
+        const rankBadge = document.getElementById('rank-badge');
+        if (playerScore >= 130) {
+            rankBadge.innerText = "👑 Ratu Perkalian";
+            rankBadge.className = "font-extrabold text-sm text-yellow-600";
+        } else if (playerScore >= 80) {
+            rankBadge.innerText = "💎 Princess Mahir";
+            rankBadge.className = "font-extrabold text-sm text-purple-700";
+        } else if (playerScore >= 40) {
+            rankBadge.innerText = "🌸 Bintang Pintar";
+            rankBadge.className = "font-extrabold text-sm text-pink-600";
+        } else {
+            rankBadge.innerText = "🎀 Pemula";
+            rankBadge.className = "font-extrabold text-sm text-gray-500";
+        }
+    }
+
+    function navigatePrev() {
+        if (currentIdx > 0) {
+            currentIdx--;
+            loadQuestion();
+        }
+    }
+
+    function navigateNext() {
+        if (currentIdx < 14) {
+            currentIdx++;
+            loadQuestion();
+        } else {
+            showFinalScreen();
+        }
+    }
+
+    function showFinalScreen() {
+        // Hide Main quiz
+        document.getElementById('quiz-panel').classList.add('hidden');
+        document.getElementById('navigation-footer').classList.add('hidden');
+        document.getElementById('top-scoreboard').classList.add('hidden');
+
+        // Show final screen
+        document.getElementById('final-screen').classList.remove('hidden');
+
+        // Render Winner Names & Scores
+        document.getElementById('winner-name-display').innerText = playerName;
+        document.getElementById('end-player-score').innerText = `${playerScore} 🌸`;
+
+        let gradRank = "";
+        let endMotiv = "";
+        if (playerScore === 150) {
+            gradRank = "👑 Ratu Perkalian Sejati Sempurna!";
+            endMotiv = "Sangat menakjubkan! Kamu menjawab seluruh 15 soal dengan sempurna dan berhak atas Mahkota Emas Matematika!";
+        } else if (playerScore >= 120) {
+            gradRank = "💎 Princess Matematika Cerdas Kelas Dunia";
+            endMotiv = "Luar biasa hebat! Kamu sudah sangat mantap dalam menguasai perkalian bersusun. Siap menyambut materi baru!";
+        } else if (playerScore >= 80) {
+            gradRank = "🌸 Bintang Matematika yang Berkilau";
+            endMotiv = "Hebat sekali! Pemahamanmu tentang perkalian bersusun sudah sangat baik. Teruslah berlatih ya cerdik!";
+        } else {
+            gradRank = "🎀 Pejuang Matematika Tangguh";
+            endMotiv = "Kerja bagus! Kamu tidak mudah menyerah menyelesaikan soal kuis ini. Yuk belajar lagi agar semakin mahir!";
+        }
+
+        document.getElementById('graduation-rank-text').innerText = gradRank;
+        document.getElementById('motivational-end-text').innerText = endMotiv;
+
+        triggerConfetti(60);
+    }
+
+    function resetQuiz() {
+        playerScore = 0;
+        currentIdx = 0;
+        solvedStatus = Array(15).fill(false);
+        updateScoresDisplay();
+        updateRankBadge();
+
+        document.getElementById('final-screen').classList.add('hidden');
+        document.getElementById('setup-screen').classList.remove('hidden');
+    }
+
+    // Modal Control (Substitute for native alerts)
+    let modalCallback = null;
+
+    function showCustomModal(title, text, emoji = "🎉", callback = null) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-text').innerText = text;
+        document.getElementById('modal-emoji').innerText = emoji;
+        modalCallback = callback;
+
+        const modal = document.getElementById('custom-modal');
+        modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('custom-modal').classList.add('hidden');
+        if (modalCallback) {
+            modalCallback();
+            modalCallback = null;
+        }
+    }
+
+    // Confetti Animation Effect
+    function triggerConfetti(count = 35) {
+        const container = document.getElementById('confetti-container');
+        container.innerHTML = "";
+        container.classList.remove('hidden');
+
+        const colors = ['#ff8da1', '#ffccd5', '#9b5de5', '#a29bfe', '#ffeaa7', '#55efc4'];
+
+        for (let i = 0; i < count; i++) {
+            const el = document.createElement('div');
+            el.className = 'confetti';
+            el.style.left = `${Math.random() * 100}vw`;
+            el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            el.style.animationDelay = `${Math.random() * 2}s`;
+            el.style.width = `${Math.random() * 8 + 6}px`;
+            el.style.height = el.style.width;
+            container.appendChild(el);
+        }
+
+        setTimeout(() => {
+            container.classList.add('hidden');
+        }, 5000);
+    }
+
+    // ==============================================
+    // CANVAS DRAWING LOGIC (SCRATCHPAD)
+    // ==============================================
+    function initCanvas() {
+        canvas = document.getElementById('scratch-canvas');
+        ctx = canvas.getContext('2d');
+
+        // Mouse Listeners
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Mobile Touch Listeners (Prevent scroll inside drawing zone)
+        canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+        canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+        canvas.addEventListener('touchend', stopDrawing);
+
+        window.addEventListener('resize', resizeCanvas);
+    }
+
+    function resizeCanvas() {
+        if (canvas && canvas.parentElement) {
+            const width = canvas.parentElement.clientWidth - 32;
+            canvas.width = width;
+            canvas.height = 120; // Fixed cozy drawing workspace
+            
+            // Reapply drawing styles
+            ctx.strokeStyle = '#9b5de5'; // Pastel Princess purple ink
+            ctx.lineWidth = 3.5;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }
+    }
+
+    function startDrawing(e) {
+        isDrawing = true;
+        ctx.beginPath();
+        ctx.moveTo(e.offsetX, e.offsetY);
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+    }
+
+    function handleTouchStart(e) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        isDrawing = true;
+        ctx.beginPath();
+        ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    }
+
+    function handleTouchMove(e) {
+        e.preventDefault();
+        if (!isDrawing) return;
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        ctx.stroke();
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+</script>
+</body>
+</html>
